@@ -1,37 +1,44 @@
 import { Router } from 'express';
-import CabModel from '../models/cab';
-import RideModel from '../models/ride';
 import CabService from '../services/cab';
+import logger from '..//utils/logger';
 
 const router = Router({
     mergeParams: true,
 });
 
 router.post('/request', async (req, res) => {
-    const {start_latitude, start_longitude, color_preference } = req.body;
+    const { start_latitude, start_longitude, color_preference } = req.body;
     const cabService = new CabService();
-    const cabModel = new CabModel();
-    const rideModel = new RideModel();
+    logger.info(
+        `GET: /cabs/request at point: ${start_latitude},${start_longitude}`
+    );
+
     try {
-        const startPoint = {latitude: start_latitude, longitude: start_longitude};
-        const nearestCab = await cabService.getNearestCab(startPoint, color_preference);
-        if (nearestCab) {
-            await cabModel.updateCabAvailability(nearestCab.cab_id);
-            const rideId = await rideModel.createRide(nearestCab.cab_id, startPoint);
+        const startPoint = {
+            latitude: start_latitude,
+            longitude: start_longitude,
+        };
+        const cabRide = await cabService.requestCabRide(
+            startPoint,
+            color_preference
+        );
+        if (cabRide) {
+            logger.info('Cab request processed, ride id', cabRide.rideId);
             res.status(200).send({
-                ride_id: rideId,
-                cab_id: nearestCab.cab_id,
-                model: nearestCab.model,
-                range: nearestCab.range,
-                color: nearestCab.color
-            })
+                ride_id: cabRide.rideId,
+                cab_id: cabRide.cab_id,
+                model: cabRide.model,
+                range: cabRide.range,
+                color: cabRide.color,
+            });
         } else {
             res.status(404).send('Cab not available');
+            logger.error('Cab request denied, cab not available');
         }
-    } catch(err) {
+    } catch (err) {
         // Rollback cab availability
-        await cabModel.updateCabAvailability(nearestCab.cab_id, true);
-        res.status(500).send(`Error: Could not fetch cabs`)
+        res.status(500).send(`Error: Could not fetch cabs`);
+        logger.error(`Cab request failed {${err}}`);
     }
 });
 
