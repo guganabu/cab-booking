@@ -23,7 +23,7 @@ export default class RideService {
     async createRide(cabId, startPoint) {
         try {
             const rideId = await this.rideModel.createRide(cabId, startPoint);
-            logger.info('RideService: Ride created', rideId);
+            logger.info('RideService: Ride created');
             return rideId;
         } catch (err) {
             logger.error('Failed creating ride', err);

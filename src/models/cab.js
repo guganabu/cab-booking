@@ -16,7 +16,7 @@ export default class CabModel extends DbModel {
             return rows;
         } catch (err) {
             logger.error('CabModel Failed fetching cabs', err);
-            throw new Error('Failed fetching cabs');
+            return Promise.reject(new Error('Failed fetching cabs'));
         }
     }
 

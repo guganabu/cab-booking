@@ -6,12 +6,12 @@
  * ref: https://cloud.google.com/blog/products/maps-platform/how-calculate-distances-map-maps-javascript-api
  */
 function haversineDistance(point1, point2) {
-    var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = point1.latitude * (Math.PI / 180); // Convert degrees to radians
-    var rlat2 = point2.latitude * (Math.PI / 180); // Convert degrees to radians
-    var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (point2.longitude - point1.longitude) * (Math.PI / 180); // Radian difference (longitudes)
-    var d =
+    const R = 3958.8; // Radius of the Earth in miles
+    const rlat1 = point1.latitude * (Math.PI / 180); // Convert degrees to radians
+    const rlat2 = point2.latitude * (Math.PI / 180); // Convert degrees to radians
+    const difflat = rlat2 - rlat1; // Radian difference (latitudes)
+    const difflon = (point2.longitude - point1.longitude) * (Math.PI / 180); // Radian difference (longitudes)
+    const miles =
         2 *
         R *
         Math.asin(
@@ -23,7 +23,7 @@ function haversineDistance(point1, point2) {
                         Math.sin(difflon / 2)
             )
         );
-    return d;
+    return round(miles * 1.60934); //convert miles to km
 }
 
 /**
@@ -65,9 +65,9 @@ function getTimeDiffInMin(startTime, endTime) {
  * @param {Float} num
  * @returns {Float}
  */
-function round(num) {
-    var m = Number((Math.abs(num) * 100).toPrecision(15));
-    return (Math.round(m) / 100) * Math.sign(num);
+function round(num, decimalPlaces = 2) {
+    num = Math.round(num + 'e' + decimalPlaces);
+    return Number(num + 'e' + -decimalPlaces);
 }
 
 export { haversineDistance, sortBy, getCurrentTime, getTimeDiffInMin, round };

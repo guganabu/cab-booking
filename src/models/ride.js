@@ -8,8 +8,9 @@ export default class RideModel extends DbModel {
      * @returns {Number}
      */
     async createRide(cabId, startPoint) {
+        console.log('should not run');
         try {
-            logger.info('RideModel: Add ride row');
+            logger.info('RideModel: create ride initiated');
             const sql = `INSERT INTO ride 
             (cab_id, start_latitude, start_longitude) 
             VALUES (?, ?, ?)`;
@@ -19,8 +20,8 @@ export default class RideModel extends DbModel {
                 startPoint.longitude,
             ]);
         } catch (err) {
-            logger.error(err);
-            throw new Error('Failed to create ride');
+            logger.error(`RideModel: failed creating ride ${err}`);
+            return Promise.reject('RideModel: Failed to create ride');
         }
     }
 

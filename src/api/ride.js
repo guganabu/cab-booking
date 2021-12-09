@@ -6,12 +6,13 @@ const router = Router({
     mergeParams: true,
 });
 
-router.post('/start', async (req, res) => {
-    const { ride_id, passenger } = req.body;
-    logger.info('POST /rides/start ', ride_id);
+router.patch('/start/:id', async (req, res) => {
+    const { id } = req.params;
+    const { passenger } = req.body;
+    logger.info(`PATCH /rides/start/${id}`);
     const rideService = new RideService();
     try {
-        const startTime = await rideService.startRide(ride_id, passenger);
+        const startTime = await rideService.startRide(id, passenger);
         res.status(200).send({ start_time: startTime });
     } catch (err) {
         logger.error(err);
@@ -21,7 +22,7 @@ router.post('/start', async (req, res) => {
 
 router.post('/complete', async (req, res) => {
     const { ride_id, latitude, longitude } = req.body;
-    logger.info('POST /rides/complete ', ride_id);
+    logger.info(`POST /rides/complete ${ride_id}`);
     const rideService = new RideService();
     try {
         const rideFare = await rideService.completeRide(
