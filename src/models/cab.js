@@ -44,7 +44,9 @@ export default class CabModel extends DbModel {
             return;
         } catch (err) {
             logger.error(`CabModel: Failed updating cab availability ${err}`);
-            return Promise.reject(new Error('Failed updating cab availability'));
+            return Promise.reject(
+                new Error('Failed updating cab availability')
+            );
         }
     }
 }

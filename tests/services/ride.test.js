@@ -164,16 +164,19 @@ describe('Test calculateFare', () => {
             latitude: rideData.end_latitude,
             longitude: rideData.end_longitude,
         };
-        const rideDistanceInKM = utils.haversineDistance(startPoint, endPoint)
+        const rideDistanceInKM = utils.haversineDistance(startPoint, endPoint);
         const rideDurationInMin = utils.getTimeDiffInMin(
             rideData.start_time,
             rideData.end_time
         );
         const rideFare =
-            (rideDistanceInKM * constants.CAB_FARE.PER_KM) +
-            (rideDurationInMin * constants.CAB_FARE.PER_MIN) + constants.CAB_FARE.COLOR_PREFERENCE;
-    
-        expect(rideService.calculateFare(rideData)).toBe(`${rideFare} ${constants.FARE_CURRENCY}`)
+            rideDistanceInKM * constants.CAB_FARE.PER_KM +
+            rideDurationInMin * constants.CAB_FARE.PER_MIN +
+            constants.CAB_FARE.COLOR_PREFERENCE;
+
+        expect(rideService.calculateFare(rideData)).toBe(
+            `${rideFare} ${constants.FARE_CURRENCY}`
+        );
     });
 
     it('it should return calculated fare value for RED color', () => {
@@ -197,15 +200,17 @@ describe('Test calculateFare', () => {
             latitude: rideData.end_latitude,
             longitude: rideData.end_longitude,
         };
-        const rideDistanceInKM = utils.haversineDistance(startPoint, endPoint)
+        const rideDistanceInKM = utils.haversineDistance(startPoint, endPoint);
         const rideDurationInMin = utils.getTimeDiffInMin(
             rideData.start_time,
             rideData.end_time
         );
         const rideFare =
-            (rideDistanceInKM * constants.CAB_FARE.PER_KM) +
-            (rideDurationInMin * constants.CAB_FARE.PER_MIN);
-    
-        expect(rideService.calculateFare(rideData)).toBe(`${rideFare} ${constants.FARE_CURRENCY}`)
+            rideDistanceInKM * constants.CAB_FARE.PER_KM +
+            rideDurationInMin * constants.CAB_FARE.PER_MIN;
+
+        expect(rideService.calculateFare(rideData)).toBe(
+            `${rideFare} ${constants.FARE_CURRENCY}`
+        );
     });
 });

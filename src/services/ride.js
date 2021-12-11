@@ -105,8 +105,8 @@ export default class RideService {
             (hipsterColor) => ride.color == hipsterColor
         );
         let rideFare =
-            (rideDistance * CAB_FARE.PER_KM) +
-            (rideDurationInMin * CAB_FARE.PER_MIN);
+            rideDistance * CAB_FARE.PER_KM +
+            rideDurationInMin * CAB_FARE.PER_MIN;
         rideFare +=
             (isPassengerPreferredHipsterColor && CAB_FARE.COLOR_PREFERENCE) ||
             0;
