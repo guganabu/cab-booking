@@ -12,10 +12,10 @@ export default class CabModel extends DbModel {
             ON c.id = cp.cab_id WHERE cp.is_available = true AND c.color = ?`;
         try {
             const rows = await this.queryAll(sql, [colorPreference]);
-            logger.info('CabModel: all available cabs fetched', rows.length);
+            logger.info(`CabModel: totally ${rows.length} cabs fetched`);
             return rows;
         } catch (err) {
-            logger.error('CabModel Failed fetching cabs', err);
+            logger.error(`CabModel: Failed fetching cabs ${err}`);
             return Promise.reject(new Error('Failed fetching cabs'));
         }
     }
@@ -23,6 +23,7 @@ export default class CabModel extends DbModel {
     /**
      * Method to update cab point availability
      * @param {Integer} cabId
+     * @param {Object | undefined} point
      * @param {Boolean} status
      * @returns
      */
@@ -39,11 +40,11 @@ export default class CabModel extends DbModel {
         WHERE cab_id = ${cabId}`;
         try {
             await this.runQuery(sql, []);
-            logger.info('CabModel: Updated cab point for ', cabId);
+            logger.info(`CabModel: Updated cab point for ${cabId}`);
             return;
         } catch (err) {
-            logger.error('CabModel Failed updating cab availability', err);
-            throw new Error('Failed updating cab availability');
+            logger.error('CabModel: Failed updating cab availability', err);
+            return Promise.reject(new Error('Failed updating cab availability'));
         }
     }
 }

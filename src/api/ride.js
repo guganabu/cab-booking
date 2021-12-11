@@ -20,13 +20,14 @@ router.patch('/start/:id', async (req, res) => {
     }
 });
 
-router.post('/complete', async (req, res) => {
-    const { ride_id, latitude, longitude } = req.body;
-    logger.info(`POST /rides/complete ${ride_id}`);
+router.patch('/complete/:id', async (req, res) => {
+    const { id } = req.params;
+    const { latitude, longitude } = req.body;
+    logger.info(`PATCH /rides/complete ${id}`);
     const rideService = new RideService();
     try {
         const rideFare = await rideService.completeRide(
-            ride_id,
+            id,
             latitude,
             longitude
         );

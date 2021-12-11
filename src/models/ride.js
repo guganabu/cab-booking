@@ -8,20 +8,20 @@ export default class RideModel extends DbModel {
      * @returns {Number}
      */
     async createRide(cabId, startPoint) {
-        console.log('should not run');
         try {
-            logger.info('RideModel: create ride initiated');
             const sql = `INSERT INTO ride 
             (cab_id, start_latitude, start_longitude) 
             VALUES (?, ?, ?)`;
-            return await this.runQuery(sql, [
+            const rowId = await this.runQuery(sql, [
                 cabId,
                 startPoint.latitude,
                 startPoint.longitude,
             ]);
+            logger.info(`RideModel: ride created with id ${rowId}`);
+            return rowId;
         } catch (err) {
             logger.error(`RideModel: failed creating ride ${err}`);
-            return Promise.reject('RideModel: Failed to create ride');
+            return Promise.reject(new Error(`Failed creating ride`));
         }
     }
 
@@ -32,14 +32,15 @@ export default class RideModel extends DbModel {
      */
     async getRide(rideId) {
         try {
-            logger.info('RideModel: Get ride details');
             const sql = `SELECT r.*,c.* FROM ride as r 
                 INNER JOIN cab c ON (c.id = r.cab_id)
                 WHERE r.id = ? AND r.cab_id = r.cab_id`;
-            return await this.getQuery(sql, [rideId]);
+            const rideData =await this.getQuery(sql, [rideId]);
+            logger.info(`RideModel: Fetched ride details for id ${rideId}`);
+            return rideData;
         } catch (err) {
-            logger.error(err);
-            throw new Error('Failed to get ride');
+            logger.error(`RideModel: failed fetching ride ${rideId} ${err}`);
+            return Promise.reject(new Error('Failed to get ride'));
         }
     }
 
@@ -48,18 +49,19 @@ export default class RideModel extends DbModel {
      * @param {Number} rideId
      * @param {String} passenger
      * @param {Datetime} startTime
-     * @returns {Number}
+     * @returns
      */
     async startRide(rideId, passenger, startTime) {
         try {
-            logger.info('RideModel: start ride');
             const sql = `UPDATE ride SET
             passenger = ?, start_time = ? 
             WHERE id = ?`;
-            return await this.runQuery(sql, [passenger, startTime, rideId]);
+            await this.runQuery(sql, [passenger, startTime, rideId]);
+            logger.info(`RideModel: started ride for id ${rideId}`);
+            return;
         } catch (err) {
-            logger.error(err);
-            throw new Error('Failed to create ride');
+            logger.error(`RideModel: failed start ride for id ${rideId} ${err}`);
+            return Promise.reject(new Error('Failed to start ride'));
         }
     }
 
@@ -70,24 +72,25 @@ export default class RideModel extends DbModel {
      * @param {Float} longitude
      * @param {Datetime} endTime
      * @param {String} cost
-     * @returns {Number}
+     * @returns
      */
     async completeRide(rideId, latitude, longitude, endTime, cost) {
         try {
-            logger.info(`RideModel: completeRide model ${rideId}`);
             const sql = `UPDATE ride SET
             end_latitude = ?, end_longitude = ?, end_time = ?, cost = ? 
             WHERE id = ?`;
-            return await this.runQuery(sql, [
+            await this.runQuery(sql, [
                 latitude,
                 longitude,
                 endTime,
                 cost,
                 rideId,
             ]);
+            logger.info(`RideModel: Ride completed for id ${rideId}`);
+            return;
         } catch (err) {
-            logger.error(err);
-            throw new Error('Failed to complete ride');
+            logger.error(`RideModel: Failed copleting ride for id ${rideId} ${err}`);
+            return Promise.reject(new Error('Failed to complete ride'));
         }
     }
 }

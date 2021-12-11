@@ -1,5 +1,5 @@
 import RideModel from '../models/ride';
-import CabService from './cab';
+import CabModel from '../models/cab';
 import {
     getCurrentTime,
     haversineDistance,
@@ -11,7 +11,7 @@ import logger from '../utils/logger';
 export default class RideService {
     constructor() {
         this.rideModel = new RideModel();
-        this.cabService = new CabService();
+        this.cabModel = new CabModel();
     }
 
     /**
@@ -23,11 +23,11 @@ export default class RideService {
     async createRide(cabId, startPoint) {
         try {
             const rideId = await this.rideModel.createRide(cabId, startPoint);
-            logger.info('RideService: Ride created');
+            logger.info(`RideService: Ride created for ${rideId}`);
             return rideId;
         } catch (err) {
-            logger.error('Failed creating ride', err);
-            throw new Error('Failed creating ride', err);
+            logger.error(`Failed creating ride ${err}`);
+            return Promise.reject(err);
         }
     }
 
@@ -39,13 +39,13 @@ export default class RideService {
      */
     async startRide(rideId, passenger) {
         try {
-            logger.info(`RideService: startRide service ${rideId}`);
             const startTime = getCurrentTime();
             await this.rideModel.startRide(rideId, passenger, startTime);
+            logger.info(`RideService: ride started for ${rideId}`);
             return startTime;
         } catch (err) {
             logger.error('Failed starting ride', err);
-            throw new Error('Failed starting ride', err);
+            return Promise.reject(err);
         }
     }
 
@@ -58,7 +58,6 @@ export default class RideService {
      */
     async completeRide(rideId, latitude, longitude) {
         try {
-            logger.info(`RideService: completeRide service ${rideId}`);
             const endTime = getCurrentTime();
             const rideData = await this.rideModel.getRide(rideId);
             const rideFare = this.calculateFare(rideData);
@@ -69,15 +68,16 @@ export default class RideService {
                 endTime,
                 rideFare
             );
-            await this.cabService.updateCabPoint(
+            await this.cabModel.updateCabPoint(
                 rideData.cab_id,
                 { latitude, longitude },
                 true
             );
+            logger.info(`RideService: ride completed for ${rideId}`);
             return rideFare;
         } catch (err) {
-            logger.error('Failed complete ride', err);
-            throw new Error('Failed complete ride', err);
+            logger.error(`Failed complete ride ${err}`);
+            return Promise.reject(err);
         }
     }
 
@@ -105,8 +105,8 @@ export default class RideService {
             (hipsterColor) => ride.color == hipsterColor
         );
         let rideFare =
-            rideDistance * CAB_FARE.PER_KM +
-            rideDurationInMin * CAB_FARE.PER_MIN;
+            (rideDistance * CAB_FARE.PER_KM) +
+            (rideDurationInMin * CAB_FARE.PER_MIN);
         rideFare +=
             (isPassengerPreferredHipsterColor && CAB_FARE.COLOR_PREFERENCE) ||
             0;
