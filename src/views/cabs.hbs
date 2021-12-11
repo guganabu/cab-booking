@@ -1,0 +1,43 @@
+<h2>
+    Available Cabs
+</h2>
+<div>
+    <table>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Model
+            </th>
+            <th>
+                Color
+            </th>
+            <th>
+                Latitude
+            </th>
+            <th>
+                Longitude
+            </th>
+        </tr>
+        {{#each cabs as |cab|}}
+            <tr>
+                <td>
+                    {{cab.id}}
+                </td>
+                <td>
+                    {{cab.model}}
+                </td>
+                <td>
+                    {{cab.color}}
+                </td>
+                <td>
+                    {{cab.latitude}}
+                </td>
+                <td>
+                    {{cab.longitude}}
+                </td>
+            </tr>
+        {{/each}}
+    </table>
+</div>

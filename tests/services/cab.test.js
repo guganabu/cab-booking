@@ -76,10 +76,10 @@ describe('Test requestCabRide', () => {
 });
 
 describe('Test getNearestCab', () => {
-    it('it should throw error when getAvailableCabsByPref is failed', async () => {
+    it('it should throw error when getAvailableCabs is failed', async () => {
         const cabService = new CabService();
         cabService.cabModel = new CabModel();
-        cabService.cabModel.getAvailableCabsByPref = jest
+        cabService.cabModel.getAvailableCabs = jest
             .fn()
             .mockRejectedValueOnce(
                 new Error('get available cabs by pref failed')
@@ -88,15 +88,13 @@ describe('Test getNearestCab', () => {
         await expect(cabService.getNearestCab()).rejects.toThrow(
             'get available cabs by pref failed'
         );
-        expect(
-            cabService.cabModel.getAvailableCabsByPref
-        ).toHaveBeenCalledTimes(1);
+        expect(cabService.cabModel.getAvailableCabs).toHaveBeenCalledTimes(1);
     });
 
     it('it should throw error when getCabsInRange is failed', async () => {
         const cabService = new CabService();
         cabService.cabModel = new CabModel();
-        cabService.cabModel.getAvailableCabsByPref = jest
+        cabService.cabModel.getAvailableCabs = jest
             .fn()
             .mockResolvedValueOnce([]);
         cabService.getCabsInRange = jest
@@ -106,9 +104,7 @@ describe('Test getNearestCab', () => {
         await expect(cabService.getNearestCab()).rejects.toThrow(
             'get cabs in range failed'
         );
-        expect(
-            cabService.cabModel.getAvailableCabsByPref
-        ).toHaveBeenCalledTimes(1);
+        expect(cabService.cabModel.getAvailableCabs).toHaveBeenCalledTimes(1);
         expect(cabService.getCabsInRange).toHaveBeenCalledTimes(1);
     });
 
@@ -120,16 +116,14 @@ describe('Test getNearestCab', () => {
             { cab_id: 2, model: 'test2' },
             { cab_id: 3, model: 'test3' },
         ];
-        cabService.cabModel.getAvailableCabsByPref = jest
+        cabService.cabModel.getAvailableCabs = jest
             .fn()
             .mockResolvedValueOnce(allCabs);
         cabService.getCabsInRange = jest
             .fn()
             .mockResolvedValueOnce([allCabs[1], allCabs[2]]);
         await expect(cabService.getNearestCab()).resolves.toEqual(allCabs[1]);
-        expect(
-            cabService.cabModel.getAvailableCabsByPref
-        ).toHaveBeenCalledTimes(1);
+        expect(cabService.cabModel.getAvailableCabs).toHaveBeenCalledTimes(1);
         expect(cabService.getCabsInRange).toHaveBeenCalledTimes(1);
     });
 });
@@ -205,5 +199,34 @@ describe('Test getCabsInRange', () => {
         await expect(
             cabService.getCabsInRange(startPoint, cabs)
         ).resolves.toEqual(expect.arrayContaining([]));
+    });
+});
+
+describe('Test getAvailableCabs', () => {
+    it('it should resolves and return available cabs', async () => {
+        const cabService = new CabService();
+        cabService.cabModel = new CabModel();
+        const availableCabs = [
+            { cab_id: 1, model: 'TEST' },
+            { cab_id: 2, model: 'TEST2' },
+        ];
+        cabService.cabModel.getAvailableCabs = jest
+            .fn()
+            .mockResolvedValueOnce(availableCabs);
+        await expect(cabService.getAvailableCabs()).resolves.toBe(
+            availableCabs
+        );
+        expect(cabService.cabModel.getAvailableCabs).toHaveBeenCalledTimes(1);
+    });
+
+    it('it should throw error and fail fetching cabs', async () => {
+        const cabService = new CabService();
+        cabService.cabModel = new CabModel();
+        
+        cabService.cabModel.getAvailableCabs = jest
+            .fn()
+            .mockRejectedValueOnce(new Error('Failed fetching available cabs'));
+        await expect(cabService.getAvailableCabs()).rejects.toThrow('Failed fetching available cabs')
+        expect(cabService.cabModel.getAvailableCabs).toHaveBeenCalledTimes(1);
     });
 });
