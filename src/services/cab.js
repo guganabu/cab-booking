@@ -55,7 +55,7 @@ export default class CabService {
      */
     async getNearestCab(startPoint, colorPreference) {
         try {
-            const cabs = await this.cabModel.getAvailableCabsByPref(
+            const cabs = await this.cabModel.getAvailableCabs(
                 colorPreference
             );
             const cabsInRange = await this.getCabsInRange(startPoint, cabs);
@@ -105,6 +105,21 @@ export default class CabService {
             logger.info(`CabService: Updated cab point for cabID : ${cabId}`);
             return;
         } catch (err) {
+            logger.error(`Could not update cab point ${err}`);
+            return Promise.reject(err);
+        }
+    }
+
+    /**
+     * Method to fetch all the available cabs
+     * @returns {Array}
+     */
+    async getAvailableCabs() {
+        try {
+            const availableCabs = await this.cabModel.getAvailableCabs();
+            logger.info(`CabService: Fetched ${availableCabs.length} available cabs`);
+            return availableCabs;
+        } catch(err) {
             logger.error(`Could not update cab point ${err}`);
             return Promise.reject(err);
         }

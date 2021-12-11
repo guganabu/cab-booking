@@ -4,19 +4,19 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-describe('Test getAvailableCabsByPref', () => {
+describe('Test getAvailableCabs', () => {
     it('it should return all available cabs matching pref', async () => {
         const cabModel = new CabModel();
         const cabs = [{ cab_id: 1, color: 'TEST', cab_id: 2, color: 'TEST' }];
         cabModel.queryAll = jest.fn().mockResolvedValueOnce(cabs);
-        await expect(cabModel.getAvailableCabsByPref()).resolves.toBe(cabs);
+        await expect(cabModel.getAvailableCabs()).resolves.toBe(cabs);
         expect(cabModel.queryAll).toHaveBeenCalledTimes(1);
     });
 
     it('it should fail request and return error', async () => {
         const cabModel = new CabModel();
         cabModel.queryAll = jest.fn().mockRejectedValueOnce();
-        await expect(cabModel.getAvailableCabsByPref()).rejects.toThrow(
+        await expect(cabModel.getAvailableCabs()).rejects.toThrow(
             'Failed fetching cabs'
         );
         expect(cabModel.queryAll).toHaveBeenCalledTimes(1);

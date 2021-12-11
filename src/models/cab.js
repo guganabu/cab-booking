@@ -7,10 +7,17 @@ export default class CabModel extends DbModel {
      * @param {Object} preference
      * @returns {Array}
      */
-    async getAvailableCabsByPref(colorPreference) {
-        const sql = `SELECT c.*, cp.* FROM cab AS c INNER JOIN cab_point AS cp 
-            ON c.id = cp.cab_id WHERE cp.is_available = true AND c.color = ?`;
+    async getAvailableCabs(colorPreference) {
         try {
+            let sql = `SELECT c.*, cp.* FROM cab AS c INNER JOIN cab_point AS cp 
+            ON c.id = cp.cab_id WHERE cp.is_available = true`;
+            const conditions = [];
+            if (colorPreference && colorPreference != '') {
+                conditions.push('c.color = ?');
+            }
+            sql = conditions.length
+                ? sql + ' AND ' + conditions.join('')
+                : sql;
             const rows = await this.queryAll(sql, [colorPreference]);
             logger.info(`CabModel: Total cabs found ${rows.length}`);
             return rows;
