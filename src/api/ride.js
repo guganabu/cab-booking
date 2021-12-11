@@ -13,10 +13,12 @@ router.patch('/start/:id', async (req, res) => {
     const rideService = new RideService();
     try {
         const startTime = await rideService.startRide(id, passenger);
-        res.status(200).send({ start_time: startTime });
+        res.status(200)
+            .type('application/json')
+            .send({ start_time: startTime });
     } catch (err) {
         logger.error(err);
-        res.status(500).send(`Error: Could not start ride`);
+        res.status(500).type('application/json').send({ message: err });
     }
 });
 
@@ -31,10 +33,10 @@ router.patch('/complete/:id', async (req, res) => {
             latitude,
             longitude
         );
-        res.status(200).send({ total_cost: rideFare });
+        res.status(200).type('application/json').send({ total_cost: rideFare });
     } catch (err) {
         logger.error(err);
-        res.status(500).send(`Error: Could not complete ride`);
+        res.status(500).type('application/json').send({ message: err });
     }
 });
 

@@ -24,7 +24,7 @@ router.post('/request', async (req, res) => {
         );
         if (cabRide) {
             logger.info(`Cab request processed, ride id ${cabRide.rideId}`);
-            res.status(200).send({
+            res.status(200).type('application/json').send({
                 ride_id: cabRide.rideId,
                 cab_id: cabRide.cab_id,
                 model: cabRide.model,
@@ -32,13 +32,14 @@ router.post('/request', async (req, res) => {
                 color: cabRide.color,
             });
         } else {
-            res.status(404).send('Cab not available');
             logger.warn('Cab request denied, cab not available');
+            res.status(404)
+                .type('application/json')
+                .send({ message: 'Cab not available in range' });
         }
     } catch (err) {
-        // Rollback cab availability
-        res.status(500).send(`Error: Could not fetch cabs`);
-        logger.error(`Cab request failed ${err}`);
+        logger.error(err);
+        res.status(500).type('application/json').send({ message: err });
     }
 });
 

@@ -36,10 +36,10 @@ export default class RideModel extends DbModel {
                 INNER JOIN cab c ON (c.id = r.cab_id)
                 WHERE r.id = ? AND r.cab_id = r.cab_id`;
             const rideData =await this.getQuery(sql, [rideId]);
-            logger.info(`RideModel: Fetched ride details for id ${rideId}`);
+            logger.info(`RideModel: Fetched ride details for rideId ${rideId}`);
             return rideData;
         } catch (err) {
-            logger.error(`RideModel: failed fetching ride ${rideId} ${err}`);
+            logger.error(`RideModel: Failed fetching rideId ${rideId} \n error ${err}`);
             return Promise.reject(new Error('Failed to get ride'));
         }
     }
@@ -57,10 +57,10 @@ export default class RideModel extends DbModel {
             passenger = ?, start_time = ? 
             WHERE id = ?`;
             await this.runQuery(sql, [passenger, startTime, rideId]);
-            logger.info(`RideModel: started ride for id ${rideId}`);
+            logger.info(`RideModel: Started ride for id rideId ${rideId}`);
             return;
         } catch (err) {
-            logger.error(`RideModel: failed start ride for id ${rideId} ${err}`);
+            logger.error(`RideModel: Failed start ride for rideId ${rideId} \n error ${err}`);
             return Promise.reject(new Error('Failed to start ride'));
         }
     }
@@ -86,10 +86,10 @@ export default class RideModel extends DbModel {
                 cost,
                 rideId,
             ]);
-            logger.info(`RideModel: Ride completed for id ${rideId}`);
+            logger.info(`RideModel: Ride completed for rideId ${rideId}`);
             return;
         } catch (err) {
-            logger.error(`RideModel: Failed copleting ride for id ${rideId} ${err}`);
+            logger.error(`RideModel: Failed copleting ride for id ${rideId} \n error ${err}`);
             return Promise.reject(new Error('Failed to complete ride'));
         }
     }
