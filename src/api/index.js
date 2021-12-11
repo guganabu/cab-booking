@@ -3,7 +3,7 @@ import ride from './ride';
 import cab from './cab';
 const router = Router();
 
-router.use('/ride', ride);
-router.use('/cab', cab);
+router.use('/rides', ride);
+router.use('/cabs', cab);
 
 export default router;
