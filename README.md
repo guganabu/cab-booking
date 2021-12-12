@@ -90,6 +90,33 @@ Unit test cases are written in `jest`. Running above command will execute all th
     3. If there is no cab available within the given range, then API will return `404` error with a message of `Cab not available in range`.
     4. The nearest cab will be assigned to a ride without starting it so that the cab will not be available for future requests.
 
+    - #### List Available Cabs
+
+    ```
+    GET /api/cabs/list
+    request payload {
+
+    }
+
+    response payload
+    `success`
+    {
+        cabs: array
+    }
+
+    `error`
+    `404` {
+      message: 'Cabs not available'
+    }
+
+    `500` {
+      message: Error
+    }
+    ```
+
+    1. This API will be used to list all the available cabs. A view engine (`hbs`) used to render the UI and show all the cabs in the browser.
+    2. If there is no cab available, then API will return `404` with a message `Cabs not available`.
+
 2. ### Ride
 
     - #### Start Ride

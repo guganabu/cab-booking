@@ -10,7 +10,7 @@ router.post('/request', async (req, res) => {
     const { start_latitude, start_longitude, color_preference } = req.body;
     const cabService = new CabService();
     logger.info(
-        `GET: /cabs/request at point: ${start_latitude},${start_longitude}`
+        `POST: /cabs/request at point: ${start_latitude},${start_longitude}`
     );
 
     try {
@@ -42,5 +42,25 @@ router.post('/request', async (req, res) => {
         res.status(500).type('application/json').send({ message: err });
     }
 });
+
+router.get('/list', async (_, res) => {
+    logger.info(
+        `GET: /cabs/list`
+    );
+    const cabService = new CabService();
+    try {
+        const cabs = await cabService.getAvailableCabs();
+        if (cabs.length) {
+            res.render('cabs', {cabs});
+        } else {
+            logger.warn('Cabs are not available')
+            res.status(404).type('application/json').send({message: 'Cabs not available'})
+        }
+    } catch (err) {
+        logger.error(err);
+        res.status(500).type('application/json').send({ message: err });
+    }
+    
+})
 
 export default router;
